@@ -2,6 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser'
 const app = express();
 import { connectDB } from "./database/index.js";
+import { getUsersWithPosts } from './queries/users.js';
+import { getAllRecords } from './queries/common.js';
 
 
 connectDB.connect(error => {
@@ -11,10 +13,17 @@ connectDB.connect(error => {
 
 app.use(bodyParser.json());
 
-app.get('/api/items', (req, res) => {
-    let sqlQuery = "SELECT * FROM items";
+app.get('/api/users', (req, res) => {
+    console.log('/api/users')
+    connectDB.query(getUsersWithPosts, (err, results) => {
+        if (err) throw err;
+        res.send(apiResponse(results));
+    });
+});
 
-    let query = connectDB.query(sqlQuery, (err, results) => {
+app.get('/api/items', (req, res) => {
+
+    connectDB.query(getAllRecords('items'), (err, results) => {
         if (err) throw err;
         res.send(apiResponse(results));
     });
@@ -81,6 +90,6 @@ app.delete('/api/items/:id', (req, res) => {
 function apiResponse(results) {
     return JSON.stringify({ "status": 200, "error": null, "response": results });
 }
-app.listen(3000, () => {
-    console.log('Server started on port 3000...');
+app.listen(3001, () => {
+    console.log('Server started on port 3001...');
 });

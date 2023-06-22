@@ -1,0 +1,1 @@
+export const getUsersWithPosts = 'select users.name, users.address, posts.post, comments.comment from users left join posts on posts.userId = users.id left join comments on comments.postId = posts.id'
